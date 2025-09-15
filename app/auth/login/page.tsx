@@ -9,11 +9,11 @@ export default function Page() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Image 
-              src="https://www.fiootv.com/wp-content/themes/mindelo/images/logo.png" 
+              src="/logo.png" 
               alt="FiooTV Logo" 
               width={48}
               height={48}
-              className="h-12 object-contain invert"
+              className="h-12 object-contain"
             />
           </div>
         </div>

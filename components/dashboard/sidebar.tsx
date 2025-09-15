@@ -14,6 +14,7 @@ import {
   RotateCcw, 
   Server, 
   StickyNote,
+  Monitor,
   ChevronDown,
   X
 } from "lucide-react";
@@ -101,6 +102,11 @@ const navigation = [
       { name: "Add Server", href: "/dashboard/servers/new" },
     ]
   },
+  {
+    name: "Platforms",
+    href: "/dashboard/platforms",
+    icon: Monitor,
+  },
 
 
 ];
@@ -142,11 +148,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Image 
-                src="https://www.fiootv.com/wp-content/themes/mindelo/images/logo.png" 
+                src="/logo.png" 
                 alt="FiooTV Logo" 
-                width={28}
+                width={100}
                 height={28}
-                className="h-[28px] object-contain invert"
+                className="h-[28px] object-contain dark:invert brightness-0"
               />
             </div>
             <button
