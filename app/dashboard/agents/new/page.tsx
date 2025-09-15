@@ -26,7 +26,7 @@ export default function NewAgentPage() {
           <CardHeader>
             <CardTitle className="text-white">Agent Information</CardTitle>
             <CardDescription className="text-slate-400">
-              Enter the agent's personal and contact details.
+              Enter the agent&apos;s personal and contact details.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -88,7 +88,7 @@ export default function NewAgentPage() {
           <CardHeader>
             <CardTitle className="text-white">Account Settings</CardTitle>
             <CardDescription className="text-slate-400">
-              Configure the agent's account access and permissions.
+              Configure the agent&apos;s account access and permissions.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

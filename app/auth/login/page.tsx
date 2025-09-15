@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/login-form";
+import Image from "next/image";
 
 export default function Page() {
   return (
@@ -7,9 +8,11 @@ export default function Page() {
         {/* FiooTV Branding */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <img 
+            <Image 
               src="https://www.fiootv.com/wp-content/themes/mindelo/images/logo.png" 
               alt="FiooTV Logo" 
+              width={48}
+              height={48}
               className="h-12 object-contain invert"
             />
           </div>

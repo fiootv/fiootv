@@ -26,7 +26,7 @@ export default function NewCustomerPage() {
           <CardHeader>
             <CardTitle className="text-white">Customer Information</CardTitle>
             <CardDescription className="text-slate-400">
-              Enter the customer's personal and contact details.
+              Enter the customer&apos;s personal and contact details.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -80,7 +80,7 @@ export default function NewCustomerPage() {
           <CardHeader>
             <CardTitle className="text-white">Subscription Details</CardTitle>
             <CardDescription className="text-slate-400">
-              Select the customer's subscription plan and settings.
+              Select the customer&apos;s subscription plan and settings.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

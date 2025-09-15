@@ -1,25 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
-  Users, 
   UserCheck, 
   Building2, 
   CreditCard, 
   FileText, 
   DollarSign, 
-  Gift, 
   RotateCcw, 
-  Mail, 
-  MessageSquare, 
   Server, 
-  Calendar, 
-  MessageCircle, 
   StickyNote,
-  LogOut,
   ChevronDown,
   X
 } from "lucide-react";
@@ -147,9 +141,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="p-5 border-b border-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <img 
+              <Image 
                 src="https://www.fiootv.com/wp-content/themes/mindelo/images/logo.png" 
                 alt="FiooTV Logo" 
+                width={28}
+                height={28}
                 className="h-[28px] object-contain invert"
               />
             </div>

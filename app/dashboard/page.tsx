@@ -69,7 +69,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-          <p className="text-gray-400 mt-1">Welcome back! Here's what's happening with FiooTV.</p>
+          <p className="text-gray-400 mt-1">Welcome back! Here&apos;s what&apos;s happening with FiooTV.</p>
         </div>
         <div className="flex space-x-3">
           <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
@@ -161,7 +161,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="text-white">Top Selling Plans</CardTitle>
             <CardDescription className="text-gray-400">
-              This month's best performers
+              This month&apos;s best performers
             </CardDescription>
           </CardHeader>
           <CardContent>
