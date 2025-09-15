@@ -19,11 +19,12 @@ import {
   Calendar, 
   MessageCircle, 
   StickyNote,
-  Settings,
+  LogOut,
   ChevronDown,
   X
 } from "lucide-react";
 import { useState } from "react";
+import { LogoutButton } from "@/components/logout-button";
 
 const navigation = [
   {
@@ -31,22 +32,9 @@ const navigation = [
     href: "/dashboard",
     icon: LayoutDashboard,
   },
+
   {
-    name: "Profile",
-    href: "/dashboard/profile",
-    icon: UserCheck,
-  },
-  {
-    name: "Agent Management",
-    href: "/dashboard/agents",
-    icon: Users,
-    children: [
-      { name: "All Agents", href: "/dashboard/agents" },
-      { name: "Add Agent", href: "/dashboard/agents/new" },
-    ]
-  },
-  {
-    name: "Customer Management",
+    name: "Customer",
     href: "/dashboard/customers",
     icon: UserCheck,
     children: [
@@ -55,7 +43,7 @@ const navigation = [
     ]
   },
   {
-    name: "Reseller Management",
+    name: "Reseller",
     href: "/dashboard/resellers",
     icon: Building2,
     children: [
@@ -64,7 +52,7 @@ const navigation = [
     ]
   },
   {
-    name: "Subscription Management",
+    name: "Subscription",
     href: "/dashboard/subscriptions",
     icon: CreditCard,
     children: [
@@ -90,15 +78,7 @@ const navigation = [
       { name: "Add Transaction", href: "/dashboard/transactions/new" },
     ]
   },
-  {
-    name: "Credits",
-    href: "/dashboard/credits",
-    icon: Gift,
-    children: [
-      { name: "All Credits", href: "/dashboard/credits" },
-      { name: "Add Credit", href: "/dashboard/credits/new" },
-    ]
-  },
+
   {
     name: "Refunds",
     href: "/dashboard/refunds",
@@ -108,24 +88,7 @@ const navigation = [
       { name: "Add Refund", href: "/dashboard/refunds/new" },
     ]
   },
-  {
-    name: "Email",
-    icon: Mail,
-    children: [
-      { name: "Settings", href: "/dashboard/email/settings" },
-      { name: "Templates", href: "/dashboard/email/templates" },
-      { name: "Add Template", href: "/dashboard/email/templates/new" },
-    ]
-  },
-  {
-    name: "SMS",
-    icon: MessageSquare,
-    children: [
-      { name: "Settings", href: "/dashboard/sms/settings" },
-      { name: "Templates", href: "/dashboard/sms/templates" },
-      { name: "Add Template", href: "/dashboard/sms/templates/new" },
-    ]
-  },
+ 
   {
     name: "Notes",
     href: "/dashboard/notes",
@@ -144,25 +107,8 @@ const navigation = [
       { name: "Add Server", href: "/dashboard/servers/new" },
     ]
   },
-  {
-    name: "Absence Records",
-    href: "/dashboard/absences",
-    icon: Calendar,
-    children: [
-      { name: "All Absences", href: "/dashboard/absences" },
-      { name: "Add Absence", href: "/dashboard/absences/new" },
-    ]
-  },
-  {
-    name: "Feedback",
-    href: "/dashboard/feedback",
-    icon: MessageCircle,
-  },
-  {
-    name: "Conversations",
-    href: "/dashboard/conversations",
-    icon: MessageSquare,
-  },
+
+
 ];
 
 interface SidebarProps {
@@ -194,17 +140,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       
       {/* Sidebar */}
       <div className={cn(
-        "fixed lg:static inset-y-0 left-0 z-50 w-64 bg-black border-r border-gray-800 flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0",
+        "fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-gray-800 flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo */}
-        <div className="p-6 border-b border-gray-800">
+        <div className="p-5 border-b border-gray-800">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">F</span>
-              </div>
-              <span className="text-xl font-bold text-white">FiooTV CRM</span>
+            <div className="flex items-center space-x-3">
+              <img 
+                src="https://www.fiootv.com/wp-content/themes/mindelo/images/logo.png" 
+                alt="FiooTV Logo" 
+                className="h-[28px] object-contain invert"
+              />
             </div>
             <button
               onClick={onClose}
@@ -228,8 +175,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={cn(
                   "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer",
                   isActive
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    ? "text-white font-bold bg-slate-800"
+                    : "text-gray-300 hover:text-white"
                 )}
                 onClick={() => item.children ? toggleExpanded(item.name) : null}
               >
@@ -264,7 +211,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       className={cn(
                         "block px-3 py-2 rounded-lg text-sm transition-colors",
                         pathname === child.href
-                          ? "bg-blue-600 text-white"
+                          ? "text-white font-bold"
                           : "text-gray-400 hover:bg-gray-800 hover:text-white"
                       )}
                     >
@@ -280,10 +227,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-800">
-          <div className="flex items-center space-x-3 text-gray-400 text-sm">
-            <Settings className="w-4 h-4" />
-            <span>Settings</span>
-          </div>
+          <LogoutButton />
         </div>
       </div>
     </>

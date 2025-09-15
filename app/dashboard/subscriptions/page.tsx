@@ -29,7 +29,7 @@ export default function SubscriptionsPage() {
           <h1 className="text-3xl font-bold text-white">Subscription Management</h1>
           <p className="text-slate-400 mt-1">Manage FiooTV subscriptions and billing cycles.</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
           <Plus className="w-4 h-4 mr-2" />
           Add Subscription
         </Button>
