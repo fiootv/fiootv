@@ -72,17 +72,17 @@ export default function DashboardPage() {
           <p className="text-gray-400 mt-1">Welcome back! Here&apos;s what&apos;s happening with FiooTV.</p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
-            Export Data
-          </Button>
+        
+          <a href="/dashboard/customers/new">
           <Button className="bg-blue-600 hover:bg-blue-700">
             Add Customer
           </Button>
+          </a>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 hidden">
         {stats.map((stat, index) => (
           <Card key={index} className="bg-gray-900 border-gray-800">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -110,7 +110,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 hidden">
         {/* Recent Customers */}
         <Card className="lg:col-span-2 bg-gray-900 border-gray-800">
           <CardHeader>
@@ -189,7 +189,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card className="bg-gray-900 border-gray-800 hidden">
         <CardHeader>
           <CardTitle className="text-white">Quick Actions</CardTitle>
           <CardDescription className="text-gray-400">
@@ -197,7 +197,7 @@ export default function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ">
             <Button variant="outline" className="h-20 flex flex-col space-y-2 border-gray-600 text-gray-300 hover:bg-gray-800">
               <UserCheck className="h-6 w-6" />
               <span>Add Customer</span>
