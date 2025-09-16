@@ -1,121 +1,130 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import CustomerForm from '@/components/customer-form';
+import { CustomerFormData } from '@/lib/types/customer';
+import { createClient } from '@/lib/supabase/client';
+import { toast } from 'sonner';
 
 export default function NewCustomerPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
+
+  const handleSubmit = async (data: CustomerFormData) => {
+    setLoading(true);
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('You must be logged in to create a customer');
+        return;
+      }
+
+      // Get the first platform (you might want to make this selectable)
+      const { data: platforms } = await supabase
+        .from('platforms')
+        .select('id')
+        .limit(1);
+
+      if (!platforms || platforms.length === 0) {
+        toast.error('No platform found. Please create a platform first.');
+        return;
+      }
+
+      // Handle file upload if present
+      let attachmentFileUrl = null;
+      let attachmentFileName = null;
+
+      if (data.attachment_file) {
+        const fileExt = data.attachment_file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `customer-attachments/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('customer-files')
+          .upload(filePath, data.attachment_file);
+
+        if (uploadError) {
+          toast.error('Failed to upload file');
+          return;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('customer-files')
+          .getPublicUrl(filePath);
+
+        attachmentFileUrl = publicUrl;
+        attachmentFileName = data.attachment_file.name;
+      }
+
+      // Prepare customer data
+      const customerData = {
+        platform_id: platforms[0].id,
+        customer_from: data.customer_from,
+        subscription_status: data.subscription_status,
+        full_name: data.full_name,
+        phone: data.phone,
+        email: data.email,
+        billing_address: data.billing_address,
+        shipping_address: data.shipping_address,
+        currency: data.currency,
+        subscription_id: data.subscription_id,
+        plan_id: data.plan_id,
+        subscription_start_date: data.subscription_start_date ? new Date(data.subscription_start_date).toISOString() : null,
+        subscription_end_date: data.subscription_end_date ? new Date(data.subscription_end_date).toISOString() : null,
+        price: data.price,
+        payment_method: data.payment_method,
+        payment_status: data.payment_status,
+        payment_gateway: data.payment_gateway,
+        card_details: data.card_details,
+        reference_number: data.reference_number,
+        has_trial: data.has_trial,
+        trial_start_date: data.trial_start_date ? new Date(data.trial_start_date).toISOString() : null,
+        trial_end_date: data.trial_end_date ? new Date(data.trial_end_date).toISOString() : null,
+        total_hours: data.total_hours,
+        device_type: data.device_type,
+        mac_address: data.mac_address,
+        service_type: data.service_type,
+        any_other_device: data.any_other_device,
+        attachment_file_url: attachmentFileUrl,
+        attachment_file_name: attachmentFileName,
+        created_by: user.id,
+      };
+
+      // Insert customer
+      const { error } = await supabase
+        .from('customers')
+        .insert([customerData]);
+
+      if (error) {
+        console.error('Error creating customer:', error);
+        toast.error('Failed to create customer');
+        return;
+      }
+
+      toast.success('Customer created successfully');
+      router.push('/dashboard/customers');
+    } catch (error) {
+      console.error('Error creating customer:', error);
+      toast.error('An error occurred while creating the customer');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    // Form reset is handled by the CustomerForm component
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-4">
-        <Link href="/dashboard/customers">
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Customers
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-white">Add New Customer</h1>
-          <p className="text-slate-400 mt-1">Create a new customer account for FiooTV services.</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 bg-slate-800 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white">Customer Information</CardTitle>
-            <CardDescription className="text-slate-400">
-              Enter the customer&apos;s personal and contact details.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="firstName" className="text-slate-300">First Name</Label>
-                <Input 
-                  id="firstName" 
-                  placeholder="Enter first name"
-                  className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName" className="text-slate-300">Last Name</Label>
-                <Input 
-                  id="lastName" 
-                  placeholder="Enter last name"
-                  className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="email" className="text-slate-300">Email Address</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="customer@example.com"
-                className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone" className="text-slate-300">Phone Number</Label>
-              <Input 
-                id="phone" 
-                placeholder="+1-555-123-4567"
-                className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              />
-            </div>
-            <div>
-              <Label htmlFor="address" className="text-slate-300">Address</Label>
-              <Input 
-                id="address" 
-                placeholder="123 Main St, City, State 12345"
-                className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-800 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white">Subscription Details</CardTitle>
-            <CardDescription className="text-slate-400">
-              Select the customer&apos;s subscription plan and settings.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="plan" className="text-slate-300">Subscription Plan</Label>
-              <Input 
-                id="plan" 
-                placeholder="e.g., Premium, Standard, Basic"
-                className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              />
-            </div>
-            <div>
-              <Label htmlFor="billingCycle" className="text-slate-300">Billing Cycle</Label>
-              <Input 
-                id="billingCycle" 
-                placeholder="Monthly, Quarterly, Yearly"
-                className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              />
-            </div>
-            <div>
-              <Label htmlFor="price" className="text-slate-300">Price</Label>
-              <Input 
-                id="price" 
-                placeholder="$99.99"
-                className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              />
-            </div>
-            <div className="pt-4">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                Create Customer Account
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="min-h-screen">
+      <CustomerForm 
+        onSubmit={handleSubmit} 
+        onReset={handleReset} 
+        loading={loading} 
+      />
     </div>
   );
 }
