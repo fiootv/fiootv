@@ -10,6 +10,7 @@ import { Note, NoteFormData, Platform, Customer } from '@/lib/types/note';
 import { createClient } from '@/lib/supabase/client';
 import { Plus, Search, Filter, Edit, Trash2, Calendar, User, Building2 } from 'lucide-react';
 import { format } from 'date-fns';
+import NotesForm from '@/components/notes-form';
 
 export default function NotesPage() {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -153,7 +154,6 @@ export default function NotesPage() {
   };
 
   if (showForm || editingNote) {
-    const NotesForm = require('@/components/notes-form').default;
     return (
       <NotesForm
         onSubmit={editingNote ? handleUpdateNote : handleCreateNote}

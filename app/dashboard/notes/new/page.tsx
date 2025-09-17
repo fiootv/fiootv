@@ -17,7 +17,7 @@ export default function NewNotePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('notes')
         .insert([{
           ...formData,

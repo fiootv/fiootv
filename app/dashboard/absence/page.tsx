@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Absence, AbsenceFormData } from '@/lib/types/absence';
 import { createClient } from '@/lib/supabase/client';
-import { Plus, Search, Filter, Edit, Trash2, Calendar, Mail, FileText } from 'lucide-react';
+import { Plus, Search, Filter, Edit, Trash2, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
+import AbsenceForm from '@/components/absence-form';
 
 export default function AbsencePage() {
   const [absences, setAbsences] = useState<Absence[]>([]);
@@ -22,7 +22,7 @@ export default function AbsencePage() {
     fetchAbsences();
   }, []);
 
-  const fetchAbsences = async () => {
+  const fetchAbsences = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -37,7 +37,7 @@ export default function AbsencePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
   const handleCreateAbsence = async (formData: AbsenceFormData) => {
     try {
@@ -112,7 +112,6 @@ export default function AbsencePage() {
   };
 
   if (showForm || editingAbsence) {
-    const AbsenceForm = require('@/components/absence-form').default;
     return (
       <AbsenceForm
         onSubmit={editingAbsence ? handleUpdateAbsence : handleCreateAbsence}

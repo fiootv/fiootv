@@ -17,7 +17,7 @@ export default function NewAbsencePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('absence')
         .insert([{
           ...formData,

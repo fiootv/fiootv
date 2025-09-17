@@ -25,7 +25,7 @@ export default function NewInvoicePage() {
         invoiceNumber = generatedNumber;
       }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('invoices')
         .insert([{
           ...formData,

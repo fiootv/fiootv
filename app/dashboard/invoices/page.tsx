@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Invoice, InvoiceFormData, Platform, Customer } from '@/lib/types/invoice';
 import { createClient } from '@/lib/supabase/client';
-import { Plus, Search, Filter, Edit, Trash2, Calendar, DollarSign, FileText, Building2, User } from 'lucide-react';
+import { Plus, Search, Filter, Edit, Trash2, FileText } from 'lucide-react';
 import { format } from 'date-fns';
+import InvoiceForm from '@/components/invoice-form';
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -180,7 +181,6 @@ export default function InvoicesPage() {
   };
 
   if (showForm || editingInvoice) {
-    const InvoiceForm = require('@/components/invoice-form').default;
     return (
       <InvoiceForm
         onSubmit={editingInvoice ? handleUpdateInvoice : handleCreateInvoice}

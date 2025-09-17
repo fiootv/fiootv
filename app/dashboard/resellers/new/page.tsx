@@ -17,7 +17,7 @@ export default function NewResellerPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('resellers')
         .insert([{
           ...formData,

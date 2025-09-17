@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Reseller, ResellerFormData, Platform } from '@/lib/types/reseller';
 import { createClient } from '@/lib/supabase/client';
-import { Plus, Search, Filter, Edit, Trash2, Calendar, Building2, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Search, Filter, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import ResellerForm from '@/components/reseller-form';
 
 export default function ResellersPage() {
   const [resellers, setResellers] = useState<Reseller[]>([]);
@@ -161,7 +161,6 @@ export default function ResellersPage() {
   };
 
   if (showForm || editingReseller) {
-    const ResellerForm = require('@/components/reseller-form').default;
     return (
       <ResellerForm
         onSubmit={editingReseller ? handleUpdateReseller : handleCreateReseller}

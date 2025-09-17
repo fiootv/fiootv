@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { 
   Users, 
   UserCheck, 
@@ -72,12 +73,11 @@ export default function DashboardPage() {
           <p className="text-gray-400 mt-1">Welcome back! Here&apos;s what&apos;s happening with FiooTV.</p>
         </div>
         <div className="flex space-x-3">
-        
-          <a href="/dashboard/customers/new">
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            Add Customer
-          </Button>
-          </a>
+          <Link href="/dashboard/customers/new">
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              Add Customer
+            </Button>
+          </Link>
         </div>
       </div>
 

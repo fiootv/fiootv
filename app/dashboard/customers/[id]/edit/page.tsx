@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import CustomerForm from '@/components/customer-form';
 import { CustomerFormData } from '@/lib/types/customer';
@@ -21,7 +21,7 @@ export default function EditCustomerPage() {
     }
   }, [params.id]);
 
-  const fetchCustomer = async (id: string) => {
+  const fetchCustomer = useCallback(async (id: string) => {
     try {
       const { data, error } = await supabase
         .from('customers')
@@ -85,7 +85,7 @@ export default function EditCustomerPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, router]);
 
   const handleSubmit = async (data: CustomerFormData) => {
     setFormLoading(true);
