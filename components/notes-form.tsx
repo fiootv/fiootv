@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,7 @@ export default function NotesForm({ onSubmit, onReset, loading = false, initialD
   useEffect(() => {
     fetchPlatforms();
     fetchCustomers();
-  }, []);
+  }, [fetchPlatforms, fetchCustomers]);
 
   useEffect(() => {
     if (initialData) {
@@ -42,7 +42,7 @@ export default function NotesForm({ onSubmit, onReset, loading = false, initialD
     }
   }, [initialData]);
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     setLoadingPlatforms(true);
     try {
       const { data, error } = await supabase
@@ -57,9 +57,9 @@ export default function NotesForm({ onSubmit, onReset, loading = false, initialD
     } finally {
       setLoadingPlatforms(false);
     }
-  };
+  }, [supabase]);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     setLoadingCustomers(true);
     try {
       const { data, error } = await supabase
@@ -74,7 +74,7 @@ export default function NotesForm({ onSubmit, onReset, loading = false, initialD
     } finally {
       setLoadingCustomers(false);
     }
-  };
+  }, [supabase]);
 
   const handleInputChange = (field: keyof NoteFormData, value: string) => {
     setFormData(prev => ({

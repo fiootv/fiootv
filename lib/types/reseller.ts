@@ -1,4 +1,5 @@
 export interface Reseller {
+  platforms: Platform;
   id: string;
   platform_id: string;
   reseller_for: string;

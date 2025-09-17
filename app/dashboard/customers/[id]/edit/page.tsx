@@ -19,7 +19,7 @@ export default function EditCustomerPage() {
     if (params.id) {
       fetchCustomer(params.id as string);
     }
-  }, [params.id]);
+  }, [params.id, fetchCustomer]);
 
   const fetchCustomer = useCallback(async (id: string) => {
     try {

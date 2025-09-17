@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,8 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
     description: '',
     payment_method: undefined,
     paid_date: '',
+    payment_notes: '',
+    document_urls: [],
   });
 
   const [platforms, setPlatforms] = useState<Platform[]>([]);
@@ -36,12 +38,13 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
   const [loadingPlatforms, setLoadingPlatforms] = useState(false);
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [autoGenerateNumber, setAutoGenerateNumber] = useState(true);
+  const [uploadingDocument, setUploadingDocument] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
     fetchPlatforms();
     fetchCustomers();
-  }, []);
+  }, [fetchPlatforms, fetchCustomers]);
 
   useEffect(() => {
     if (initialData) {
@@ -50,7 +53,7 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
     }
   }, [initialData]);
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     setLoadingPlatforms(true);
     try {
       const { data, error } = await supabase
@@ -65,9 +68,9 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
     } finally {
       setLoadingPlatforms(false);
     }
-  };
+  }, [supabase]);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     setLoadingCustomers(true);
     try {
       const { data, error } = await supabase
@@ -82,7 +85,7 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
     } finally {
       setLoadingCustomers(false);
     }
-  };
+  }, [supabase]);
 
   const generateInvoiceNumber = async () => {
     try {
@@ -110,10 +113,53 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
       description: formData.description || undefined,
       payment_method: formData.payment_method || undefined,
       paid_date: formData.paid_date || undefined,
+      payment_notes: formData.payment_notes || undefined,
+      document_urls: formData.document_urls || undefined,
       invoice_number: autoGenerateNumber ? undefined : formData.invoice_number,
     };
     
     onSubmit(cleanedData);
+  };
+
+  const handleDocumentUpload = async (files: FileList) => {
+    setUploadingDocument(true);
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        // const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}-${file.name}`;
+        const filePath = `invoices/documents/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('documents')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+          .from('documents')
+          .getPublicUrl(filePath);
+
+        return data.publicUrl;
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+      setFormData(prev => ({ 
+        ...prev, 
+        document_urls: [...(prev.document_urls || []), ...uploadedUrls] 
+      }));
+    } catch (error) {
+      console.error('Error uploading documents:', error);
+      alert('Failed to upload documents. Please try again.');
+    } finally {
+      setUploadingDocument(false);
+    }
+  };
+
+  const removeDocument = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      document_urls: prev.document_urls?.filter((_, i) => i !== index) || []
+    }));
   };
 
   const handleReset = () => {
@@ -128,6 +174,8 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
       description: '',
       payment_method: undefined,
       paid_date: '',
+      payment_notes: '',
+      document_urls: [],
     });
     setAutoGenerateNumber(true);
     onReset();
@@ -394,6 +442,119 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
                     />
                   </div>
                 </div>
+
+                {/* Payment Notes */}
+                <div className="space-y-2">
+                  <Label htmlFor="payment_notes" className="text-white">
+                    Payment Notes
+                  </Label>
+                  <Textarea
+                    id="payment_notes"
+                    placeholder="Enter additional payment information, transaction details, or notes..."
+                    value={formData.payment_notes || ''}
+                    onChange={(e) => handleInputChange('payment_notes', e.target.value)}
+                    rows={3}
+                    className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-400 resize-none"
+                  />
+                </div>
+
+                {/* Document Upload - Only show for payment methods that require documents */}
+                {formData.payment_method && ['Check', 'Bank Transfer', 'Wire Transfer'].includes(formData.payment_method) && (
+                  <div className="space-y-2">
+                    <Label className="text-white">
+                      Payment Documents
+                    </Label>
+                    <div className="space-y-3">
+                      {/* Uploaded Documents List */}
+                      {formData.document_urls && formData.document_urls.length > 0 && (
+                        <div className="space-y-2">
+                          {formData.document_urls.map((url, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-slate-600">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-white text-sm font-medium truncate">
+                                    Document {index + 1}
+                                  </p>
+                                  <p className="text-slate-400 text-xs truncate">
+                                    {url.split('/').pop()}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-400 hover:text-blue-300 text-sm"
+                                >
+                                  View
+                                </a>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => removeDocument(index)}
+                                  className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Upload Area */}
+                      <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center">
+                        <input
+                          type="file"
+                          id="document_upload"
+                          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                          multiple
+                          onChange={(e) => {
+                            const files = e.target.files;
+                            if (files && files.length > 0) handleDocumentUpload(files);
+                          }}
+                          className="hidden"
+                          disabled={uploadingDocument}
+                        />
+                        <label
+                          htmlFor="document_upload"
+                          className="cursor-pointer flex flex-col items-center space-y-2"
+                        >
+                          <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center">
+                            {uploadingDocument ? (
+                              <div className="w-6 h-6 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                              </svg>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-medium">
+                              {uploadingDocument ? 'Uploading...' : 'Upload Payment Documents'}
+                            </p>
+                            <p className="text-slate-400 text-xs">
+                              PDF, JPG, PNG, DOC, DOCX (max 10MB each)
+                            </p>
+                            <p className="text-slate-500 text-xs mt-1">
+                              Select multiple files to upload
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <p className="text-slate-400 text-xs">
+                      Upload copies of checks, bank transfer receipts, or wire transfer confirmations. You can upload multiple documents.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

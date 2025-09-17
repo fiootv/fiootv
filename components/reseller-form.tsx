@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,7 @@ export default function ResellerForm({ onSubmit, onReset, loading = false, initi
 
   useEffect(() => {
     fetchPlatforms();
-  }, []);
+  }, [fetchPlatforms]);
 
   useEffect(() => {
     if (initialData) {
@@ -42,7 +42,7 @@ export default function ResellerForm({ onSubmit, onReset, loading = false, initi
     }
   }, [initialData]);
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     setLoadingPlatforms(true);
     try {
       const { data, error } = await supabase
@@ -57,7 +57,7 @@ export default function ResellerForm({ onSubmit, onReset, loading = false, initi
     } finally {
       setLoadingPlatforms(false);
     }
-  };
+  }, [supabase]);
 
   const handleInputChange = (field: keyof ResellerFormData, value: string) => {
     setFormData(prev => ({

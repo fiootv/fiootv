@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,7 +53,7 @@ export default function CustomerForm({ onSubmit, onReset, loading = false, initi
 
   useEffect(() => {
     fetchPlatforms();
-  }, []);
+  }, [fetchPlatforms]);
 
   useEffect(() => {
     if (initialData) {
@@ -98,7 +98,7 @@ export default function CustomerForm({ onSubmit, onReset, loading = false, initi
     }
   }, [formData.trial_start_date, formData.trial_end_date]);
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('platforms')
@@ -114,7 +114,7 @@ export default function CustomerForm({ onSubmit, onReset, loading = false, initi
     } catch (error) {
       console.error('Error fetching platforms:', error);
     }
-  };
+  }, [supabase]);
 
   const handleInputChange = (field: keyof CustomerFormData, value: string | number | boolean) => {
     setFormData(prev => ({

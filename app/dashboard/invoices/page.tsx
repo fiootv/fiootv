@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Invoice, InvoiceFormData, Platform, Customer } from '@/lib/types/invoice';
+import { Invoice, InvoiceWithRelations, InvoiceFormData, Platform, Customer } from '@/lib/types/invoice';
 import { createClient } from '@/lib/supabase/client';
-import { Plus, Search, Filter, Edit, Trash2, FileText } from 'lucide-react';
+import { Plus, Search, Filter, Edit, Trash2, FileText, Paperclip } from 'lucide-react';
 import { format } from 'date-fns';
 import InvoiceForm from '@/components/invoice-form';
 
 export default function InvoicesPage() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceWithRelations[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,16 +21,16 @@ export default function InvoicesPage() {
   const [platformFilter, setPlatformFilter] = useState('all');
   const [customerFilter, setCustomerFilter] = useState('all');
   const [showForm, setShowForm] = useState(false);
-  const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
+  const [editingInvoice, setEditingInvoice] = useState<InvoiceWithRelations | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
     fetchInvoices();
     fetchPlatforms();
     fetchCustomers();
-  }, []);
+  }, [fetchInvoices, fetchPlatforms, fetchCustomers]);
 
-  const fetchInvoices = async () => {
+  const fetchInvoices = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -49,9 +49,9 @@ export default function InvoicesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('platforms')
@@ -63,9 +63,9 @@ export default function InvoicesPage() {
     } catch (error) {
       console.error('Error fetching platforms:', error);
     }
-  };
+  }, [supabase]);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('customers')
@@ -77,7 +77,7 @@ export default function InvoicesPage() {
     } catch (error) {
       console.error('Error fetching customers:', error);
     }
-  };
+  }, [supabase]);
 
   const handleCreateInvoice = async (formData: InvoiceFormData) => {
     try {
@@ -196,6 +196,8 @@ export default function InvoicesPage() {
           description: editingInvoice.description,
           payment_method: editingInvoice.payment_method,
           paid_date: editingInvoice.paid_date,
+          payment_notes: editingInvoice.payment_notes,
+          document_urls: editingInvoice.document_urls,
         } : undefined}
       />
     );
@@ -326,6 +328,14 @@ export default function InvoicesPage() {
                     </div>
                     <div className="flex items-center space-x-3">
                       {getStatusBadge(invoice)}
+                      {invoice.document_urls && invoice.document_urls.length > 0 && (
+                        <div className="flex items-center space-x-1 text-slate-400">
+                          <Paperclip className="h-4 w-4" />
+                          <span className="text-xs">
+                            {invoice.document_urls.length} Document{invoice.document_urls.length > 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"

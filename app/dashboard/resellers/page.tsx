@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,9 +24,9 @@ export default function ResellersPage() {
   useEffect(() => {
     fetchResellers();
     fetchPlatforms();
-  }, []);
+  }, [fetchResellers, fetchPlatforms]);
 
-  const fetchResellers = async () => {
+  const fetchResellers = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -61,9 +61,9 @@ export default function ResellersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('platforms')
@@ -75,7 +75,7 @@ export default function ResellersPage() {
     } catch (error) {
       console.error('Error fetching platforms:', error);
     }
-  };
+  }, [supabase]);
 
   const handleCreateReseller = async (formData: ResellerFormData) => {
     try {

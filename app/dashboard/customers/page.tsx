@@ -15,7 +15,8 @@ import {
   Eye,
   Users,
   CreditCard,
-  Filter
+  Filter,
+  MessageSquare
 } from "lucide-react";
 import { createClient } from '@/lib/supabase/client';
 import { Customer } from '@/lib/types/customer';
@@ -41,7 +42,7 @@ export default function CustomersPage() {
   useEffect(() => {
     fetchCustomers();
     fetchPlatforms();
-  }, []);
+  }, [fetchCustomers, fetchPlatforms]);
 
   const fetchCustomers = useCallback(async () => {
     try {
@@ -107,6 +108,11 @@ export default function CustomersPage() {
   const handleEdit = (customer: Customer) => {
     // Navigate to edit customer page
     router.push(`/dashboard/customers/${customer.id}/edit`);
+  };
+
+  const handleChat = (customer: Customer) => {
+    // Navigate to customer details page with communication tab
+    router.push(`/dashboard/customers/${customer.id}?tab=communication`);
   };
 
   const handleDelete = async (id: string) => {
@@ -334,6 +340,15 @@ export default function CustomersPage() {
                           title="View customer details"
                         >
                           <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-slate-400 hover:text-blue-500"
+                          onClick={() => handleChat(customer)}
+                          title="Start conversation"
+                        >
+                          <MessageSquare className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="ghost" 

@@ -10,9 +10,16 @@ export interface Invoice {
   description?: string;
   payment_method?: string;
   paid_date?: string;
+  payment_notes?: string;
+  document_urls?: string[];
   created_by: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface InvoiceWithRelations extends Invoice {
+  platforms: Platform;
+  customers: Customer;
 }
 
 export interface InvoiceFormData {
@@ -26,6 +33,8 @@ export interface InvoiceFormData {
   description?: string;
   payment_method?: string;
   paid_date?: string;
+  payment_notes?: string;
+  document_urls?: string[];
 }
 
 export interface Platform {

@@ -20,7 +20,7 @@ export default function AbsencePage() {
 
   useEffect(() => {
     fetchAbsences();
-  }, []);
+  }, [fetchAbsences]);
 
   const fetchAbsences = useCallback(async () => {
     setLoading(true);

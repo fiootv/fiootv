@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,9 +28,9 @@ export default function NotesPage() {
     fetchNotes();
     fetchPlatforms();
     fetchCustomers();
-  }, []);
+  }, [fetchNotes, fetchPlatforms, fetchCustomers]);
 
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -49,9 +49,9 @@ export default function NotesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('platforms')
@@ -63,9 +63,9 @@ export default function NotesPage() {
     } catch (error) {
       console.error('Error fetching platforms:', error);
     }
-  };
+  }, [supabase]);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('customers')
@@ -77,7 +77,7 @@ export default function NotesPage() {
     } catch (error) {
       console.error('Error fetching customers:', error);
     }
-  };
+  }, [supabase]);
 
   const handleCreateNote = async (formData: NoteFormData) => {
     try {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export default function PlatformsPage() {
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('platforms')
@@ -41,11 +41,11 @@ export default function PlatformsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [supabase]);
 
   useEffect(() => {
     fetchPlatforms();
-  }, []);
+  }, [fetchPlatforms]);
 
   const handleAddNew = () => {
     setEditingPlatform(null);
