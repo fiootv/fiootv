@@ -4,15 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { 
-  LayoutDashboard, 
-  UserCheck, 
-  Building2, 
-  CreditCard, 
-  FileText, 
-  DollarSign, 
-  RotateCcw, 
-  Server, 
+import {
+  LayoutDashboard,
+  UserCheck,
+  Building2,
+  FileText,
   StickyNote,
   Monitor,
   Calendar,
@@ -47,15 +43,7 @@ const navigation = [
       { name: "Add Reseller", href: "/dashboard/resellers/new" },
     ]
   },
-  {
-    name: "Subscription",
-    href: "/dashboard/subscriptions",
-    icon: CreditCard,
-    children: [
-      { name: "All Subscriptions", href: "/dashboard/subscriptions" },
-      { name: "Add Subscription", href: "/dashboard/subscriptions/new" },
-    ]
-  },
+
   {
     name: "Invoicing",
     href: "/dashboard/invoices",
@@ -65,25 +53,7 @@ const navigation = [
       { name: "Create Invoice", href: "/dashboard/invoices/new" },
     ]
   },
-  {
-    name: "Transactions",
-    href: "/dashboard/transactions",
-    icon: DollarSign,
-    children: [
-      { name: "All Transactions", href: "/dashboard/transactions" },
-      { name: "Add Transaction", href: "/dashboard/transactions/new" },
-    ]
-  },
 
-  {
-    name: "Refunds",
-    href: "/dashboard/refunds",
-    icon: RotateCcw,
-    children: [
-      { name: "All Refunds", href: "/dashboard/refunds" },
-      { name: "Add Refund", href: "/dashboard/refunds/new" },
-    ]
-  },
  
   {
     name: "Notes",
@@ -101,15 +71,6 @@ const navigation = [
     children: [
       { name: "All Absences", href: "/dashboard/absence" },
       { name: "Add Absence", href: "/dashboard/absence/new" },
-    ]
-  },
-  {
-    name: "Servers",
-    href: "/dashboard/servers",
-    icon: Server,
-    children: [
-      { name: "All Servers", href: "/dashboard/servers" },
-      { name: "Add Server", href: "/dashboard/servers/new" },
     ]
   },
   {

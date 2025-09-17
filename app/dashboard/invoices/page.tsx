@@ -24,12 +24,6 @@ export default function InvoicesPage() {
   const [editingInvoice, setEditingInvoice] = useState<InvoiceWithRelations | null>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchInvoices();
-    fetchPlatforms();
-    fetchCustomers();
-  }, [fetchInvoices, fetchPlatforms, fetchCustomers]);
-
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
     try {
@@ -78,6 +72,12 @@ export default function InvoicesPage() {
       console.error('Error fetching customers:', error);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchInvoices();
+    fetchPlatforms();
+    fetchCustomers();
+  }, [fetchInvoices, fetchPlatforms, fetchCustomers]);
 
   const handleCreateInvoice = async (formData: InvoiceFormData) => {
     try {

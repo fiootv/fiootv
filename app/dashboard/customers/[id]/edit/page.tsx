@@ -15,12 +15,6 @@ export default function EditCustomerPage() {
   const [initialData, setInitialData] = useState<CustomerFormData | null>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    if (params.id) {
-      fetchCustomer(params.id as string);
-    }
-  }, [params.id, fetchCustomer]);
-
   const fetchCustomer = useCallback(async (id: string) => {
     try {
       const { data, error } = await supabase
@@ -86,6 +80,12 @@ export default function EditCustomerPage() {
       setLoading(false);
     }
   }, [supabase, router]);
+
+  useEffect(() => {
+    if (params.id) {
+      fetchCustomer(params.id as string);
+    }
+  }, [params.id, fetchCustomer]);
 
   const handleSubmit = async (data: CustomerFormData) => {
     setFormLoading(true);

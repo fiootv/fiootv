@@ -2,19 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
   Eye,
-  Users,
-  CreditCard,
   Filter,
   MessageSquare
 } from "lucide-react";
@@ -31,18 +29,7 @@ export default function CustomersPage() {
   const [platformFilter, setPlatformFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [stats, setStats] = useState({
-    totalCustomers: 0,
-    activeSubscriptions: 0,
-    monthlyRevenue: 0,
-    conversionRate: 0
-  });
   const supabase = createClient();
-
-  useEffect(() => {
-    fetchCustomers();
-    fetchPlatforms();
-  }, [fetchCustomers, fetchPlatforms]);
 
   const fetchCustomers = useCallback(async () => {
     try {
@@ -61,7 +48,6 @@ export default function CustomersPage() {
       }
 
       setCustomers(data || []);
-      calculateStats(data || []);
     } catch (error) {
       console.error('Error fetching customers:', error);
       toast.error('An error occurred while fetching customers');
@@ -84,21 +70,11 @@ export default function CustomersPage() {
     }
   }, [supabase]);
 
-  const calculateStats = (customerData: Customer[]) => {
-    const totalCustomers = customerData.length;
-    const activeSubscriptions = customerData.filter(c => c.subscription_status === 'active').length;
-    const monthlyRevenue = customerData
-      .filter(c => c.subscription_status === 'active' && c.price)
-      .reduce((sum, c) => sum + (c.price || 0), 0);
-    const conversionRate = totalCustomers > 0 ? (activeSubscriptions / totalCustomers) * 100 : 0;
+  useEffect(() => {
+    fetchCustomers();
+    fetchPlatforms();
+  }, [fetchCustomers, fetchPlatforms]);
 
-    setStats({
-      totalCustomers,
-      activeSubscriptions,
-      monthlyRevenue,
-      conversionRate: parseFloat(conversionRate.toFixed(1))
-    });
-  };
 
   const handleView = (customer: Customer) => {
     // Navigate to customer details page
@@ -194,47 +170,10 @@ export default function CustomersPage() {
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-slate-900 border-slate-700">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400">Total Customers</CardTitle>
-            <Users className="h-4 w-4 text-slate-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{stats.totalCustomers}</div>
-            <p className="text-xs text-slate-400">All time customers</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-slate-800 border-slate-700">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400">Active Subscriptions</CardTitle>
-            <CreditCard className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{stats.activeSubscriptions}</div>
-            <p className="text-xs text-slate-400">{stats.conversionRate}% of total</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-slate-800 border-slate-700">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400">Monthly Revenue</CardTitle>
-            <CreditCard className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{formatCurrency(stats.monthlyRevenue)}</div>
-            <p className="text-xs text-slate-400">From active subscriptions</p>
-          </CardContent>
-        </Card>
-    
-      </div>
 
       {/* Search and Filters */}
       <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-white">All Customers</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />

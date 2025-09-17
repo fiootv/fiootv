@@ -41,18 +41,6 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
   const [uploadingDocument, setUploadingDocument] = useState(false);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchPlatforms();
-    fetchCustomers();
-  }, [fetchPlatforms, fetchCustomers]);
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-      setAutoGenerateNumber(!initialData.invoice_number);
-    }
-  }, [initialData]);
-
   const fetchPlatforms = useCallback(async () => {
     setLoadingPlatforms(true);
     try {
@@ -86,6 +74,18 @@ export default function InvoiceForm({ onSubmit, onReset, loading = false, initia
       setLoadingCustomers(false);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchPlatforms();
+    fetchCustomers();
+  }, [fetchPlatforms, fetchCustomers]);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+      setAutoGenerateNumber(!initialData.invoice_number);
+    }
+  }, [initialData]);
 
   const generateInvoiceNumber = async () => {
     try {

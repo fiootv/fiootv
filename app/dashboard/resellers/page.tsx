@@ -21,11 +21,6 @@ export default function ResellersPage() {
   const [editingReseller, setEditingReseller] = useState<Reseller | null>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchResellers();
-    fetchPlatforms();
-  }, [fetchResellers, fetchPlatforms]);
-
   const fetchResellers = useCallback(async () => {
     setLoading(true);
     try {
@@ -76,6 +71,11 @@ export default function ResellersPage() {
       console.error('Error fetching platforms:', error);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchResellers();
+    fetchPlatforms();
+  }, [fetchResellers, fetchPlatforms]);
 
   const handleCreateReseller = async (formData: ResellerFormData) => {
     try {

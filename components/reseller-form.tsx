@@ -32,16 +32,6 @@ export default function ResellerForm({ onSubmit, onReset, loading = false, initi
   const [loadingPlatforms, setLoadingPlatforms] = useState(false);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchPlatforms();
-  }, [fetchPlatforms]);
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData]);
-
   const fetchPlatforms = useCallback(async () => {
     setLoadingPlatforms(true);
     try {
@@ -58,6 +48,16 @@ export default function ResellerForm({ onSubmit, onReset, loading = false, initi
       setLoadingPlatforms(false);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchPlatforms();
+  }, [fetchPlatforms]);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleInputChange = (field: keyof ResellerFormData, value: string) => {
     setFormData(prev => ({

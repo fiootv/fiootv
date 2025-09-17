@@ -31,17 +31,6 @@ export default function NotesForm({ onSubmit, onReset, loading = false, initialD
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchPlatforms();
-    fetchCustomers();
-  }, [fetchPlatforms, fetchCustomers]);
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData]);
-
   const fetchPlatforms = useCallback(async () => {
     setLoadingPlatforms(true);
     try {
@@ -75,6 +64,17 @@ export default function NotesForm({ onSubmit, onReset, loading = false, initialD
       setLoadingCustomers(false);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchPlatforms();
+    fetchCustomers();
+  }, [fetchPlatforms, fetchCustomers]);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleInputChange = (field: keyof NoteFormData, value: string) => {
     setFormData(prev => ({

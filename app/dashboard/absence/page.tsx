@@ -18,10 +18,6 @@ export default function AbsencePage() {
   const [editingAbsence, setEditingAbsence] = useState<Absence | null>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchAbsences();
-  }, [fetchAbsences]);
-
   const fetchAbsences = useCallback(async () => {
     setLoading(true);
     try {
@@ -38,6 +34,10 @@ export default function AbsencePage() {
       setLoading(false);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchAbsences();
+  }, [fetchAbsences]);
 
   const handleCreateAbsence = async (formData: AbsenceFormData) => {
     try {

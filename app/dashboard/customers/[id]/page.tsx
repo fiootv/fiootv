@@ -22,19 +22,6 @@ export default function CustomerDetailsPage() {
   const [activeTab, setActiveTab] = useState('info');
   const supabase = createClient();
 
-  useEffect(() => {
-    if (params.id) {
-      fetchCustomer(params.id as string);
-    }
-  }, [params.id, fetchCustomer]);
-
-  useEffect(() => {
-    const tab = searchParams.get('tab');
-    if (tab === 'communication') {
-      setActiveTab('communication');
-    }
-  }, [searchParams]);
-
   const fetchCustomer = useCallback(async (id: string) => {
     try {
       const { data, error } = await supabase
@@ -61,6 +48,19 @@ export default function CustomerDetailsPage() {
       setLoading(false);
     }
   }, [supabase, router]);
+
+  useEffect(() => {
+    if (params.id) {
+      fetchCustomer(params.id as string);
+    }
+  }, [params.id, fetchCustomer]);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'communication') {
+      setActiveTab('communication');
+    }
+  }, [searchParams]);
 
   const handleDelete = async () => {
     if (!customer || !confirm('Are you sure you want to delete this customer?')) return;

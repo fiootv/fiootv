@@ -51,9 +51,6 @@ export default function CustomerForm({ onSubmit, onReset, loading = false, initi
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchPlatforms();
-  }, [fetchPlatforms]);
 
   useEffect(() => {
     if (initialData) {
@@ -115,6 +112,10 @@ export default function CustomerForm({ onSubmit, onReset, loading = false, initi
       console.error('Error fetching platforms:', error);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchPlatforms();
+  }, [fetchPlatforms]);
 
   const handleInputChange = (field: keyof CustomerFormData, value: string | number | boolean) => {
     setFormData(prev => ({

@@ -24,12 +24,6 @@ export default function NotesPage() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchNotes();
-    fetchPlatforms();
-    fetchCustomers();
-  }, [fetchNotes, fetchPlatforms, fetchCustomers]);
-
   const fetchNotes = useCallback(async () => {
     setLoading(true);
     try {
@@ -78,6 +72,12 @@ export default function NotesPage() {
       console.error('Error fetching customers:', error);
     }
   }, [supabase]);
+
+  useEffect(() => {
+    fetchNotes();
+    fetchPlatforms();
+    fetchCustomers();
+  }, [fetchNotes, fetchPlatforms, fetchCustomers]);
 
   const handleCreateNote = async (formData: NoteFormData) => {
     try {
