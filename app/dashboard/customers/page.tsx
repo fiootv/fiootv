@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Search, 
   Plus, 
@@ -13,7 +14,8 @@ import {
   Trash2, 
   Eye,
   Users,
-  CreditCard
+  CreditCard,
+  Filter
 } from "lucide-react";
 import { createClient } from '@/lib/supabase/client';
 import { Customer } from '@/lib/types/customer';
@@ -22,8 +24,11 @@ import { toast } from 'sonner';
 export default function CustomersPage() {
   const router = useRouter();
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [platforms, setPlatforms] = useState<{id: string, name: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [platformFilter, setPlatformFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [stats, setStats] = useState({
     totalCustomers: 0,
@@ -35,6 +40,7 @@ export default function CustomersPage() {
 
   useEffect(() => {
     fetchCustomers();
+    fetchPlatforms();
   }, []);
 
   const fetchCustomers = async () => {
@@ -60,6 +66,20 @@ export default function CustomersPage() {
       toast.error('An error occurred while fetching customers');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPlatforms = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('platforms')
+        .select('id, name')
+        .order('name');
+
+      if (error) throw error;
+      setPlatforms(data || []);
+    } catch (error) {
+      console.error('Error fetching platforms:', error);
     }
   };
 
@@ -115,11 +135,15 @@ export default function CustomersPage() {
     }
   };
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.subscription_id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCustomers = customers.filter(customer => {
+    const matchesSearch = customer.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         customer.subscription_id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesPlatform = platformFilter === 'all' || customer.platform_id === platformFilter;
+    const matchesStatus = statusFilter === 'all' || customer.subscription_status === statusFilter;
+    
+    return matchesSearch && matchesPlatform && matchesStatus;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -202,22 +226,66 @@ export default function CustomersPage() {
       {/* Search and Filters */}
       <Card className="bg-slate-800 border-slate-700">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-white">All Customers</CardTitle>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-                <Input
-                  placeholder="Search customers..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-64 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-                />
-              </div>
-            </div>
-          </div>
+          <CardTitle className="text-white">All Customers</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+              <Input
+                placeholder="Search customers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+              />
+            </div>
+            
+            <Select value={platformFilter} onValueChange={setPlatformFilter}>
+              <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                <SelectValue placeholder="Filter by platform" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem value="all" className="text-white hover:bg-slate-700">All platforms</SelectItem>
+                {platforms.map((platform) => (
+                  <SelectItem key={platform.id} value={platform.id} className="text-white hover:bg-slate-700">
+                    {platform.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem value="all" className="text-white hover:bg-slate-700">All statuses</SelectItem>
+                <SelectItem value="active" className="text-white hover:bg-slate-700">Active</SelectItem>
+                <SelectItem value="pending" className="text-white hover:bg-slate-700">Pending</SelectItem>
+                <SelectItem value="cancelled" className="text-white hover:bg-slate-700">Cancelled</SelectItem>
+                <SelectItem value="expired" className="text-white hover:bg-slate-700">Expired</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchTerm('');
+                setPlatformFilter('all');
+                setStatusFilter('all');
+              }}
+              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Clear Filters
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Customers List */}
+      <Card className="bg-slate-900 border-slate-700">
+        <CardContent className="p-6">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="text-slate-400">Loading customers...</div>

@@ -2,23 +2,23 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ResellerFormData } from '@/lib/types/reseller';
+import { AbsenceFormData } from '@/lib/types/absence';
 import { createClient } from '@/lib/supabase/client';
-import ResellerForm from '@/components/reseller-form';
+import AbsenceForm from '@/components/absence-form';
 
-export default function NewResellerPage() {
+export default function NewAbsencePage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
-  const handleSubmit = async (formData: ResellerFormData) => {
+  const handleSubmit = async (formData: AbsenceFormData) => {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
-        .from('resellers')
+        .from('absence')
         .insert([{
           ...formData,
           created_by: user.id,
@@ -28,20 +28,20 @@ export default function NewResellerPage() {
 
       if (error) throw error;
       
-      router.push('/dashboard/resellers');
+      router.push('/dashboard/absence');
     } catch (error) {
-      console.error('Error creating reseller:', error);
+      console.error('Error creating absence:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleReset = () => {
-    router.push('/dashboard/resellers');
+    router.push('/dashboard/absence');
   };
 
   return (
-    <ResellerForm
+    <AbsenceForm
       onSubmit={handleSubmit}
       onReset={handleReset}
       loading={loading}

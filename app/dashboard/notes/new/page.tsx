@@ -2,23 +2,23 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ResellerFormData } from '@/lib/types/reseller';
+import { NoteFormData } from '@/lib/types/note';
 import { createClient } from '@/lib/supabase/client';
-import ResellerForm from '@/components/reseller-form';
+import NotesForm from '@/components/notes-form';
 
-export default function NewResellerPage() {
+export default function NewNotePage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
-  const handleSubmit = async (formData: ResellerFormData) => {
+  const handleSubmit = async (formData: NoteFormData) => {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
-        .from('resellers')
+        .from('notes')
         .insert([{
           ...formData,
           created_by: user.id,
@@ -28,20 +28,20 @@ export default function NewResellerPage() {
 
       if (error) throw error;
       
-      router.push('/dashboard/resellers');
+      router.push('/dashboard/notes');
     } catch (error) {
-      console.error('Error creating reseller:', error);
+      console.error('Error creating note:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleReset = () => {
-    router.push('/dashboard/resellers');
+    router.push('/dashboard/notes');
   };
 
   return (
-    <ResellerForm
+    <NotesForm
       onSubmit={handleSubmit}
       onReset={handleReset}
       loading={loading}

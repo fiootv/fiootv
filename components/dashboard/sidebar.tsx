@@ -15,6 +15,7 @@ import {
   Server, 
   StickyNote,
   Monitor,
+  Calendar,
   ChevronDown,
   X
 } from "lucide-react";
@@ -91,6 +92,15 @@ const navigation = [
     children: [
       { name: "All Notes", href: "/dashboard/notes" },
       { name: "Add Note", href: "/dashboard/notes/new" },
+    ]
+  },
+  {
+    name: "Absence",
+    href: "/dashboard/absence",
+    icon: Calendar,
+    children: [
+      { name: "All Absences", href: "/dashboard/absence" },
+      { name: "Add Absence", href: "/dashboard/absence/new" },
     ]
   },
   {

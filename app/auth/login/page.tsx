@@ -11,9 +11,9 @@ export default function Page() {
             <Image 
               src="/logo.png" 
               alt="FiooTV Logo" 
-              width={48}
+              width={108}
               height={48}
-              className="h-12 object-contain"
+              className="object-contain invert brightness-0"
             />
           </div>
         </div>
