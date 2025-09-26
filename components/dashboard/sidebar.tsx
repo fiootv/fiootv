@@ -13,7 +13,8 @@ import {
   Monitor,
   Calendar,
   ChevronDown,
-  X
+  X,
+  Users
 } from "lucide-react";
 import { useState } from "react";
 import { LogoutButton } from "@/components/logout-button";
@@ -77,6 +78,15 @@ const navigation = [
     name: "Platforms",
     href: "/dashboard/platforms",
     icon: Monitor,
+  },
+  {
+    name: "Agents",
+    href: "/dashboard/users",
+    icon: Users,
+    children: [
+      { name: "All Agents", href: "/dashboard/users" },
+      { name: "Add Agent", href: "/dashboard/users/new" },
+    ]
   },
 
 

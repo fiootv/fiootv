@@ -5,12 +5,13 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, Trash2, Download, User, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Download, User, MessageSquare, Eye } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Customer } from '@/lib/types/customer';
 import { toast } from 'sonner';
 import CommunicationTabs from '@/components/communication/communication-tabs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AttachmentPreview from '@/components/attachment-preview';
 
 export default function CustomerDetailsPage() {
   const params = useParams();
@@ -20,6 +21,7 @@ export default function CustomerDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('info');
+  const [previewOpen, setPreviewOpen] = useState(false);
   const supabase = createClient();
 
   const fetchCustomer = useCallback(async (id: string) => {
@@ -351,6 +353,15 @@ export default function CustomerDetailsPage() {
                       <Button
                         size="sm"
                         variant="outline"
+                        onClick={() => setPreviewOpen(true)}
+                        className="text-xs bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+                      >
+                        <Eye className="w-3 h-3 mr-1" />
+                        Preview
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => window.open(customer.attachment_file_url, '_blank')}
                         className="text-xs"
                       >
@@ -374,6 +385,16 @@ export default function CustomerDetailsPage() {
           />
         </TabsContent>
       </Tabs>
+
+      {/* Attachment Preview Modal */}
+      {customer?.attachment_file_url && (
+        <AttachmentPreview
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          attachmentUrl={customer.attachment_file_url}
+          attachmentName={customer.attachment_file_name || 'Attachment'}
+        />
+      )}
     </div>
   );
 }

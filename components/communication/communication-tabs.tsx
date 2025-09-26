@@ -22,10 +22,6 @@ export default function CommunicationTabs({ customerId, customerPhone, customerE
   const [activeTab, setActiveTab] = useState('sms');
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchConversations();
-  }, [fetchConversations]);
-
   const fetchConversations = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -46,6 +42,10 @@ export default function CommunicationTabs({ customerId, customerPhone, customerE
       setLoading(false);
     }
   }, [supabase, customerId]);
+
+  useEffect(() => {
+    fetchConversations();
+  }, [fetchConversations]);
 
   const handleConversationAdded = (conversation: Conversation) => {
     setConversations(prev => [conversation, ...prev]);
